@@ -1,14 +1,8 @@
 # GizemliBoard
 
-2007 Wayback kaydındaki bölüm adlarıyla HTML, CSS ve JS forumu.
+2007 anasayfasından kurulan forum. Bölümler, son mesajlar, çevrimiçi kutusu, üye kartı, arama ve yönetim var.
 
-Eski yazılım: Burning Board 2.3.6. Stil notu: Delikan. En çok seçilen tema: Crocodile.
+`index.html` dosyasını aç.
 
-## Açmak
-
-`index.html` dosyasını tarayıcıda aç.
-
-- Yönetici: `admin` / `GbAdmin2007`
-- Üye: `demo` / `123456`
-
-Yazılar bu tarayıcıda kalır.
+- Yönetici: admin / GbAdmin2007
+- Üye: demo / 123456
