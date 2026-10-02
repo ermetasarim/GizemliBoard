@@ -397,7 +397,7 @@ function boardView(slug) {
   const parent = m.parentPath ? `<a href="${href(m.parentPath)}">${esc(m.parent)}</a> → ` : "";
   const subs = (b.subs || []).length ? `<section class="cat"><h2>Alt konular</h2><div class="subboard">${subGrid(b.subs)}</div></section>` : "";
   const topics = `<section class="cat"><h2>Forumda bulunan konular: ${esc(b.name)}</h2>${b.desc ? `<div class="note">${esc(b.desc)}</div>` : ""}<table class="threads"><thead><tr><th>Konu / konuyu başlatan</th><th class="last">Son mesaj</th><th class="num">Cevap</th><th class="num">Görüntüleme</th></tr></thead><tbody>
-    ${list.length ? list.map((t) => `<tr><td><a class="board-name" href="${href(threadPath(t))}">${t.pinned ? "[sabit] " : ""}<span class="no">${m.label}.${t.id}</span>${esc(t.title)}</a><div class="desc">${esc(user(t.userId).name)}</div></td><td class="last">${esc(user(t.userId).name)}<div>${vbDate(t.last)}</div></td><td class="num">${replies(t.id)}</td><td class="num">${t.views}</td></tr>`).join("") : `<tr><td colspan="4">henüz yok</td></tr>`}
+    ${list.length ? list.map((t) => `<tr><td><a class="board-name" href="${href(threadPath(t))}">${t.pinned ? "[sabit] " : ""}${esc(t.title)}</a><div class="desc">${esc(user(t.userId).name)}</div></td><td class="last">${esc(user(t.userId).name)}<div>${vbDate(t.last)}</div></td><td class="num">${replies(t.id)}</td><td class="num">${t.views}</td></tr>`).join("") : `<tr><td colspan="4">henüz yok</td></tr>`}
   </tbody></table></section>`;
   return `<div class="crumb"><a href="${href("index.html")}">Anasayfa</a> → <a href="${href(m.catFile)}">${m.cn}. ${esc(b.cat)}</a> → ${parent}${esc(b.name)}</div>${subs}${topics}<div class="crumb"><a class="btn" href="${href(m.path + "yeni")}">Yeni konu</a> · arşiv: ${num(b.archiveTopics)} konu, ${num(b.archivePosts)} mesaj</div>`;
 }
@@ -421,7 +421,7 @@ function thread(id) {
 
 function compose(pre) {
   if (!me()) return `<div class="welcome">Önce <a href="${href("giris.html")}">giriş yap</a>.</div>`;
-  const opts = flat().map((b) => `<option value="${b.slug}" ${b.slug === pre ? "selected" : ""}>${metaOf(b.slug).label} ${esc(b.name)}</option>`).join("");
+  const opts = flat().map((b) => `<option value="${b.slug}" ${b.slug === pre ? "selected" : ""}>${esc(b.name)}</option>`).join("");
   return `<form class="composer" id="compose"><h2>Yeni konu</h2><label>Bölüm</label><select name="board">${opts}</select><label>Başlık</label><input name="title" required /><label>İleti</label><textarea name="body" required></textarea><button class="btn" type="submit">Konuyu aç</button></form>`;
 }
 
@@ -439,7 +439,7 @@ function search(q) {
   const n = q.trim().toLowerCase();
   const hits = n.length < 2 ? [] : db.topics.filter((t) => t.title.toLowerCase().includes(n) || db.posts.some((p) => p.topicId === t.id && p.body.toLowerCase().includes(n)));
   return `<form class="composer" id="find"><label>Arama</label><input name="q" value="${esc(q)}" /><button class="btn" type="submit">Ara</button></form>
-    <section class="cat"><h2>Sonuç</h2><table class="threads">${hits.map((t) => `<tr><td><a href="${href(threadPath(t))}"><span class="no">${metaOf(t.board).label}.${t.id}</span>${esc(t.title)}</a></td></tr>`).join("") || `<tr><td>Eşleşen konu yok.</td></tr>`}</table></section>`;
+    <section class="cat"><h2>Sonuç</h2><table class="threads">${hits.map((t) => `<tr><td><a href="${href(threadPath(t))}">${esc(t.title)}</a></td></tr>`).join("") || `<tr><td>Eşleşen konu yok.</td></tr>`}</table></section>`;
 }
 
 function members() {
@@ -449,7 +449,7 @@ function member(id) {
   const u = user(Number(id));
   if (!u.id) return `<div class="welcome">Üye yok.</div>`;
   const topics = db.topics.filter((t) => t.userId === u.id);
-  return `<div class="crumb"><a href="${href("uyeler.html")}">Üyeler</a> → ${esc(u.name)}</div><section class="cat"><h2><span class="no">${u.id}</span>${esc(u.name)}</h2><div class="note">@${esc(u.username)} · ${esc(u.rank || "Üye")}</div><table class="threads">${topics.map((t) => `<tr><td><a href="${href(threadPath(t))}">${esc(t.title)}</a></td></tr>`).join("") || `<tr><td>Konu yok.</td></tr>`}</table></section>`;
+  return `<div class="crumb"><a href="${href("uyeler.html")}">Üyeler</a> → ${esc(u.name)}</div><section class="cat"><h2>${esc(u.name)}</h2><div class="note">@${esc(u.username)} · ${esc(u.rank || "Üye")}</div><table class="threads">${topics.map((t) => `<tr><td><a href="${href(threadPath(t))}">${esc(t.title)}</a></td></tr>`).join("") || `<tr><td>Konu yok.</td></tr>`}</table></section>`;
 }
 
 function bind() {
