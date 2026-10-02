@@ -32,8 +32,10 @@ table.forum tbody tr:nth-child(even) td, table.threads tbody tr:nth-child(even) 
 table.forum tr:hover td, table.threads tr:hover td { background: #fff1dc; }
 .board-name { font-weight: bold; font-size: 13px; }
 .desc { color: #8a6a4a; margin-top: 2px; }
-.sub td:first-child { padding-left: 28px; }
-.sub .board-name { font-size: 12px; font-weight: normal; }
+.subs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; margin: 6px 0 2px 22px; }
+.subs a { color: #6d5340; }
+.subboard { padding: 8px 10px 10px; }
+.subboard .subs { margin-left: 0; }
 .num { width: 78px; text-align: center; color: #6d5340; }
 .last { width: 240px; color: #6d5340; }
 .last a { font-weight: bold; }
@@ -60,4 +62,5 @@ textarea { min-height: 140px; }
 @media (max-width: 860px) {
   .stats, .post, .top, .foot, .subbar { display: block; }
   .num, .last { width: auto; }
+  .subs { grid-template-columns: 1fr; margin-left: 0; }
 }

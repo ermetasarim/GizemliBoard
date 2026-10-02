@@ -309,16 +309,20 @@ function lastCell(topic) {
   if (!topic) return "henüz yok";
   return `<a href="#/t/${topic.id}">${esc(topic.title)}</a><div>Son yazan ${esc(user(topic.userId).name)}</div><div>${vbDate(topic.last)}</div>`;
 }
-function forumRow(b, child) {
-  const last = latest(child ? [b.slug] : [b.slug, ...(b.subs || []).map((s) => s.slug)]);
-  return `<tr class="${child ? "sub" : "main"}"><td><span class="${child ? "dot" : "folder"}${b.archiveTopics ? "" : " off"}"></span><a class="board-name" href="#/b/${b.slug}">${esc(b.name)}</a>${b.desc ? `<div class="desc">${esc(b.desc)}</div>` : ""}</td>
+function subGrid(subs) {
+  if (!subs || !subs.length) return "";
+  return `<div class="subs">${subs.map((s) => `<a href="#/b/${s.slug}"><span class="dot"></span>${esc(s.name)}${s.archiveTopics ? ` (${num(s.archiveTopics)}/${num(s.archivePosts)})` : ""}</a>`).join("")}</div>`;
+}
+function forumRow(b) {
+  const last = latest([b.slug, ...(b.subs || []).map((s) => s.slug)]);
+  return `<tr><td><span class="folder${b.archiveTopics ? "" : " off"}"></span><a class="board-name" href="#/b/${b.slug}">${esc(b.name)}</a>${b.desc ? `<div class="desc">${esc(b.desc)}</div>` : ""}${subGrid(b.subs)}</td>
     <td class="last">${lastCell(last)}</td>
     <td class="num">${num(b.archiveTopics)}</td>
     <td class="num">${num(b.archivePosts)}</td></tr>`;
 }
-function forumTable(boards, child) {
+function forumTable(boards) {
   return `<table class="forum"><thead><tr><th>Forum</th><th class="last">Son mesaj</th><th class="num">Konular</th><th class="num">Mesajlar</th></tr></thead><tbody>
-    ${boards.map((b) => forumRow(b, child) + ((b.subs || []).map((s) => forumRow(s, true)).join(""))).join("")}
+    ${boards.map((b) => forumRow(b)).join("")}
   </tbody></table>`;
 }
 function home(only) {
@@ -333,7 +337,7 @@ function boardView(slug) {
   if (!b) return `<div class="welcome">Bölüm yok.</div>`;
   const list = topicsOf(slug).sort((a, z) => z.pinned - a.pinned || z.last - a.last);
   const parent = b.parentSlug ? `<a href="#/b/${b.parentSlug}">${esc(b.parent)}</a> → ` : "";
-  const subs = (b.subs || []).length ? `<section class="cat"><h2>Alt forumlar</h2>${forumTable(b.subs, true)}</section>` : "";
+  const subs = (b.subs || []).length ? `<section class="cat"><h2>Alt forumlar</h2><div class="subboard">${subGrid(b.subs)}</div></section>` : "";
   const topics = `<section class="cat"><h2>Forumda bulunan konular: ${esc(b.name)}</h2>${b.desc ? `<div class="note">${esc(b.desc)}</div>` : ""}<table class="threads"><thead><tr><th>Konu / konuyu başlatan</th><th class="last">Son mesaj</th><th class="num">Cevap</th><th class="num">Görüntüleme</th></tr></thead><tbody>
     ${list.length ? list.map((t) => `<tr><td><a class="board-name" href="#/t/${t.id}">${t.pinned ? "[sabit] " : ""}${esc(t.title)}</a><div class="desc">${esc(user(t.userId).name)}</div></td><td class="last">${esc(user(t.userId).name)}<div>${vbDate(t.last)}</div></td><td class="num">${replies(t.id)}</td><td class="num">${t.views}</td></tr>`).join("") : `<tr><td colspan="4">henüz yok</td></tr>`}
   </tbody></table></section>`;
