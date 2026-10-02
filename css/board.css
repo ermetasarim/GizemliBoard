@@ -32,10 +32,12 @@ table.forum tbody tr:nth-child(even) td, table.threads tbody tr:nth-child(even) 
 table.forum tr:hover td, table.threads tr:hover td { background: #fff1dc; }
 .board-name { font-weight: bold; font-size: 13px; }
 .desc { color: #8a6a4a; margin-top: 2px; }
-.subs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; margin: 6px 0 2px 22px; }
-.subs a { color: #6d5340; }
+.subcols { width: 100%; margin: 6px 0 2px; border-collapse: collapse; }
+.subcols td { width: 50%; padding: 2px 8px 2px 0; border: 0; background: transparent !important; vertical-align: top; }
+.subcols a { color: #6d5340; }
+.subcols .count { color: #a37b52; }
 .subboard { padding: 8px 10px 10px; }
-.subboard .subs { margin-left: 0; }
+.subboard .subcols { margin: 0; }
 .num { width: 78px; text-align: center; color: #6d5340; }
 .last { width: 240px; color: #6d5340; }
 .last a { font-weight: bold; }
@@ -62,5 +64,6 @@ textarea { min-height: 140px; }
 @media (max-width: 860px) {
   .stats, .post, .top, .foot, .subbar { display: block; }
   .num, .last { width: auto; }
-  .subs { grid-template-columns: 1fr; margin-left: 0; }
+  .subcols td { width: auto; display: block; }
+  .subcols tr { display: block; }
 }

@@ -311,7 +311,10 @@ function lastCell(topic) {
 }
 function subGrid(subs) {
   if (!subs || !subs.length) return "";
-  return `<div class="subs">${subs.map((s) => `<a href="#/b/${s.slug}"><span class="dot"></span>${esc(s.name)}${s.archiveTopics ? ` (${num(s.archiveTopics)}/${num(s.archivePosts)})` : ""}</a>`).join("")}</div>`;
+  const cells = subs.map((s) => `<td><a href="#/b/${s.slug}"><span class="dot"></span>${esc(s.name)}${s.archiveTopics ? ` <span class="count">(${num(s.archiveTopics)}/${num(s.archivePosts)})</span>` : ""}</a></td>`);
+  const rows = [];
+  for (let i = 0; i < cells.length; i += 2) rows.push(`<tr>${cells[i]}${cells[i + 1] || "<td></td>"}</tr>`);
+  return `<table class="subcols"><tbody>${rows.join("")}</tbody></table>`;
 }
 function forumRow(b) {
   const last = latest([b.slug, ...(b.subs || []).map((s) => s.slug)]);
