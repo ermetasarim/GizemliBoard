@@ -298,50 +298,59 @@ const BASE = (() => {
   if (mark >= 0) return path.slice(0, mark + "/gizemliboard".length).replace(/\/$/, "");
   return path.replace(/\/$/, "");
 })();
+function fileSlug(s) {
+  const map = { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", Ç: "c", Ğ: "g", İ: "i", I: "i", Ö: "o", Ş: "s", Ü: "u" };
+  return String(s || "").replace(/[çğıöşüÇĞİÖŞÜIİ]/g, (c) => map[c] || c).toLowerCase().replace(/&/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70) || "sayfa";
+}
 const href = (path) => {
-  const raw = String(path || "");
+  const raw = String(path || "index.html");
   const q = raw.indexOf("?");
-  const body = (q >= 0 ? raw.slice(0, q) : raw).replace(/^\/+|\/+$/g, "");
+  let body = (q >= 0 ? raw.slice(0, q) : raw).replace(/^\/+/, "");
   const query = q >= 0 ? raw.slice(q) : "";
-  return BASE + "/" + body + (body ? "/" : "") + query;
+  if (!body) body = "index.html";
+  if (!body.endsWith(".html")) body += ".html";
+  return BASE + "/" + body + query;
 };
 const go = (path) => { history.pushState({}, "", href(path)); route(); };
 function segments() {
-  let path = location.pathname.replace(/\/index\.html$/, "").replace(/\/404\.html$/, "");
+  let path = location.pathname;
   if (BASE && path.toLowerCase().startsWith(BASE.toLowerCase())) path = path.slice(BASE.length);
-  return path.split("/").filter(Boolean);
+  return path.split("/").filter(Boolean).map((part) => part.replace(/\.html$/, "")).filter((part) => part && part !== "index" && part !== "404");
 }
 function metaOf(slug) {
   for (let ci = 0; ci < db.cats.length; ci++) {
     const c = db.cats[ci];
+    const cs = fileSlug(c.title);
     for (let bi = 0; bi < c.boards.length; bi++) {
       const b = c.boards[bi];
-      if (b.slug === slug) return { cn: ci + 1, bn: bi + 1, sn: 0, path: `${ci + 1}/${bi + 1}/`, label: `${ci + 1}.${bi + 1}`, name: b.name, cat: c.title };
+      const bs = fileSlug(b.name);
+      if (b.slug === slug) return { cn: ci + 1, bn: bi + 1, sn: 0, path: `${cs}/${bs}.html`, label: `${ci + 1}.${bi + 1}`, name: b.name, cat: c.title, catFile: `${cs}.html` };
       for (let si = 0; si < (b.subs || []).length; si++) {
         const s = b.subs[si];
-        if (s.slug === slug) return { cn: ci + 1, bn: bi + 1, sn: si + 1, path: `${ci + 1}/${bi + 1}/${si + 1}/`, label: `${ci + 1}.${bi + 1}.${si + 1}`, name: s.name, cat: c.title, parent: b.name, parentPath: `${ci + 1}/${bi + 1}/` };
+        if (s.slug === slug) return { cn: ci + 1, bn: bi + 1, sn: si + 1, path: `${cs}/${bs}/${fileSlug(s.name)}.html`, label: `${ci + 1}.${bi + 1}.${si + 1}`, name: s.name, cat: c.title, catFile: `${cs}.html`, parent: b.name, parentPath: `${cs}/${bs}.html` };
       }
     }
   }
-  return { cn: 1, bn: 1, sn: 0, path: "1/1/", label: "", name: "", cat: "" };
+  return { cn: 1, bn: 1, sn: 0, path: "genel/genel.html", label: "", name: "", cat: "", catFile: "genel.html" };
 }
 function threadPath(topic) {
-  return metaOf(topic.board).path + "k/" + topic.id + "/";
+  const dir = metaOf(topic.board).path.replace(/\.html$/, "");
+  return dir + "/" + fileSlug(topic.title) + ".html";
 }
-function currentThreadId() {
+function currentThread() {
   const parts = segments();
-  const k = parts.indexOf("k");
-  return k >= 0 ? Number(parts[k + 1]) : 0;
+  const name = parts[parts.length - 1];
+  return db.topics.find((t) => fileSlug(t.title) === name) || null;
 }
 
 function chrome() {
   const u = me();
   document.getElementById("tools").innerHTML = u
     ? `${esc(u.name)} · <a href="${href("yeni")}">Yeni konu</a> · <button id="out" type="button">Çıkış</button>`
-    : `<a href="${href("giris")}">Giriş</a> · <a href="${href("katil")}">Kayıt ol</a>`;
-  document.getElementById("out")?.addEventListener("click", () => { db.me = null; save(); go(""); });
-  document.getElementById("nav").innerHTML = `<a href="${href("")}">Anasayfa</a>` + db.cats.map((c, i) => `<a href="${href(i + 1)}">${i + 1}. ${esc(c.title)}</a>`).join("");
-  document.getElementById("subbar").innerHTML = `<span>Şu an: ${u ? esc(u.name) : "3 ziyaretçi"}</span><span><a href="${href("uyeler")}">Üyeler</a> · <a href="${href("arama")}">Arama</a></span>`;
+    : `<a href="${href("giris.html")}">Giriş</a> · <a href="${href("katil.html")}">Kayıt ol</a>`;
+  document.getElementById("out")?.addEventListener("click", () => { db.me = null; save(); go("index.html"); });
+  document.getElementById("nav").innerHTML = `<a href="${href("index.html")}">Anasayfa</a>` + db.cats.map((c, i) => `<a href="${href(fileSlug(c.title))}">${i + 1}. ${esc(c.title)}</a>`).join("");
+  document.getElementById("subbar").innerHTML = `<span>Şu an: ${u ? esc(u.name) : "3 ziyaretçi"}</span><span><a href="${href("uyeler.html")}">Üyeler</a> · <a href="${href("arama.html")}">Arama</a></span>`;
 }
 
 function latest(slugs) {
@@ -351,11 +360,11 @@ function lastCell(topic) {
   if (!topic) return "henüz yok";
   return `<a href="${href(threadPath(topic))}">${esc(topic.title)}</a><div>Son yazan ${esc(user(topic.userId).name)}</div><div>${vbDate(topic.last)}</div>`;
 }
-function subGrid(subs, cn, bn) {
+function subGrid(subs) {
   if (!subs || !subs.length) return "";
-  const cells = subs.map((s, si) => {
-    const label = `${cn}.${bn}.${si + 1}`;
-    return `<td><a href="${href(cn + "/" + bn + "/" + (si + 1))}"><span class="dot"></span><span class="no">${label}</span>${esc(s.name)}${s.archiveTopics ? ` <span class="count">(${num(s.archiveTopics)}/${num(s.archivePosts)})</span>` : ""}</a></td>`;
+  const cells = subs.map((s) => {
+    const m = metaOf(s.slug);
+    return `<td><a href="${href(m.path)}"><span class="dot"></span><span class="no">${m.label}</span>${esc(s.name)}${s.archiveTopics ? ` <span class="count">(${num(s.archiveTopics)}/${num(s.archivePosts)})</span>` : ""}</a></td>`;
   });
   const rows = [];
   for (let i = 0; i < cells.length; i += 2) rows.push(`<tr>${cells[i]}${cells[i + 1] || "<td></td>"}</tr>`);
@@ -363,7 +372,7 @@ function subGrid(subs, cn, bn) {
 }
 function forumRow(b, cn, bn) {
   const last = latest([b.slug, ...(b.subs || []).map((s) => s.slug)]);
-  return `<tr><td><span class="folder${b.archiveTopics ? "" : " off"}"></span><a class="board-name" href="${href(cn + "/" + bn)}"><span class="no">${cn}.${bn}</span>${esc(b.name)}</a>${b.desc ? `<div class="desc">${esc(b.desc)}</div>` : ""}${subGrid(b.subs, cn, bn)}</td>
+  return `<tr><td><span class="folder${b.archiveTopics ? "" : " off"}"></span><a class="board-name" href="${href(metaOf(b.slug).path)}"><span class="no">${cn}.${bn}</span>${esc(b.name)}</a>${b.desc ? `<div class="desc">${esc(b.desc)}</div>` : ""}${subGrid(b.subs)}</td>
     <td class="last">${lastCell(last)}</td>
     <td class="num">${num(b.archiveTopics)}</td>
     <td class="num">${num(b.archivePosts)}</td></tr>`;
@@ -375,9 +384,9 @@ function forumTable(boards, cn) {
 }
 function home(only) {
   const cats = only == null ? db.cats.map((c, i) => [c, i]) : [[db.cats[only], only]].filter((x) => x[0]);
-  const rows = cats.map(([c, i]) => `<section class="cat" id="k${i + 1}"><h2><a href="${href(i + 1)}"><span class="no">${i + 1}</span>${esc(c.title)}</a></h2>${forumTable(c.boards, i + 1)}</section>`).join("");
-  const welcome = only == null ? `<div class="welcome"><b>Net Aleminin En Gizemli Forum Sitesi Sitesine Hoşgeldiniz.</b><br>Kategori adresi /1/, konu /1/2/, alt konu /1/2/3/ biçiminde.</div>
-    <div class="stats"><span>Konular: 1.195 · Mesajlar: 1.455 · Üye: 56</span><span>En yeni üyemiz: kzd2" · En popüler bölüm: Serbest Kürsü</span></div>` : `<div class="crumb"><a href="${href("")}">Anasayfa</a> → <span class="no">${only + 1}</span>${esc(cats[0][0].title)}</div>`;
+  const rows = cats.map(([c, i]) => `<section class="cat" id="k${i + 1}"><h2><a href="${href(fileSlug(c.title))}"><span class="no">${i + 1}</span>${esc(c.title)}</a></h2>${forumTable(c.boards, i + 1)}</section>`).join("");
+  const welcome = only == null ? `<div class="welcome"><b>Net Aleminin En Gizemli Forum Sitesi Sitesine Hoşgeldiniz.</b><br>Adresler kategori.html, kategori/konu.html, kategori/konu/alt-konu.html ve kategori/konu/alt-konu/forum.html biçiminde.</div>
+    <div class="stats"><span>Konular: 1.195 · Mesajlar: 1.455 · Üye: 56</span><span>En yeni üyemiz: kzd2" · En popüler bölüm: Serbest Kürsü</span></div>` : `<div class="crumb"><a href="${href("index.html")}">Anasayfa</a> → <span class="no">${only + 1}</span>${esc(cats[0][0].title)}</div>`;
   return welcome + rows;
 }
 function boardView(slug) {
@@ -386,11 +395,11 @@ function boardView(slug) {
   const m = metaOf(slug);
   const list = topicsOf(slug).sort((a, z) => z.pinned - a.pinned || z.last - a.last);
   const parent = m.parentPath ? `<a href="${href(m.parentPath)}">${esc(m.parent)}</a> → ` : "";
-  const subs = (b.subs || []).length ? `<section class="cat"><h2>Alt konular</h2><div class="subboard">${subGrid(b.subs, m.cn, m.bn)}</div></section>` : "";
+  const subs = (b.subs || []).length ? `<section class="cat"><h2>Alt konular</h2><div class="subboard">${subGrid(b.subs)}</div></section>` : "";
   const topics = `<section class="cat"><h2><span class="no">${m.label}</span>Forumda bulunan konular: ${esc(b.name)}</h2>${b.desc ? `<div class="note">${esc(b.desc)}</div>` : ""}<table class="threads"><thead><tr><th>Konu / konuyu başlatan</th><th class="last">Son mesaj</th><th class="num">Cevap</th><th class="num">Görüntüleme</th></tr></thead><tbody>
     ${list.length ? list.map((t) => `<tr><td><a class="board-name" href="${href(threadPath(t))}">${t.pinned ? "[sabit] " : ""}<span class="no">${m.label}.${t.id}</span>${esc(t.title)}</a><div class="desc">${esc(user(t.userId).name)}</div></td><td class="last">${esc(user(t.userId).name)}<div>${vbDate(t.last)}</div></td><td class="num">${replies(t.id)}</td><td class="num">${t.views}</td></tr>`).join("") : `<tr><td colspan="4">henüz yok</td></tr>`}
   </tbody></table></section>`;
-  return `<div class="crumb"><a href="${href("")}">Anasayfa</a> → <a href="${href(m.cn)}">${m.cn}. ${esc(b.cat)}</a> → ${parent}<span class="no">${m.label}</span>${esc(b.name)}</div>${subs}${topics}<div class="crumb"><a class="btn" href="${href(m.path + "yeni")}">Yeni konu</a> · arşiv: ${num(b.archiveTopics)} konu, ${num(b.archivePosts)} mesaj</div>`;
+  return `<div class="crumb"><a href="${href("index.html")}">Anasayfa</a> → <a href="${href(m.catFile)}">${m.cn}. ${esc(b.cat)}</a> → ${parent}<span class="no">${m.label}</span>${esc(b.name)}</div>${subs}${topics}<div class="crumb"><a class="btn" href="${href(m.path + "yeni")}">Yeni konu</a> · arşiv: ${num(b.archiveTopics)} konu, ${num(b.archivePosts)} mesaj</div>`;
 }
 
 function thread(id) {
@@ -401,8 +410,8 @@ function thread(id) {
   const m = metaOf(t.board);
   const u = me();
   const admin = u && u.admin ? `<div class="admin"><button class="btn ghost" data-act="pin" type="button">${t.pinned ? "Sabiti kaldır" : "Sabitle"}</button><button class="btn ghost" data-act="lock" type="button">${t.locked ? "Kilidi aç" : "Kilitle"}</button><button class="btn ghost" data-act="del" type="button">Sil</button></div>` : "";
-  const form = t.locked ? `<div class="err">Bu konu kilitli.</div>` : u ? `<form id="reply"><label>Yanıt</label><textarea name="body" required></textarea><button class="btn" type="submit">Gönder</button></form>` : `<div class="err">Yanıt için <a href="${href("giris")}">giriş yap</a>.</div>`;
-  return `<div class="crumb"><a href="${href("")}">Anasayfa</a> → <a href="${href(m.path)}"><span class="no">${m.label}</span>${esc(b?.name || "")}</a> → ${esc(t.title)}</div>
+  const form = t.locked ? `<div class="err">Bu konu kilitli.</div>` : u ? `<form id="reply"><label>Yanıt</label><textarea name="body" required></textarea><button class="btn" type="submit">Gönder</button></form>` : `<div class="err">Yanıt için <a href="${href("giris.html")}">giriş yap</a>.</div>`;
+  return `<div class="crumb"><a href="${href("index.html")}">Anasayfa</a> → <a href="${href(m.path)}"><span class="no">${m.label}</span>${esc(b?.name || "")}</a> → ${esc(t.title)}</div>
     <div class="thread">${db.posts.filter((p) => p.topicId === t.id).map((p) => {
       const a = user(p.userId);
       return `<article class="post"><div class="who"><b>${esc(a.name)}</b><span class="rank">${esc(a.rank || "Üye")}</span><div>@${esc(a.username)}</div></div><div class="body"><div class="when">${vbDate(p.created)}</div>${esc(p.body).replace(/\n/g, "<br>")}</div></article>`;
@@ -411,7 +420,7 @@ function thread(id) {
 }
 
 function compose(pre) {
-  if (!me()) return `<div class="welcome">Önce <a href="${href("giris")}">giriş yap</a>.</div>`;
+  if (!me()) return `<div class="welcome">Önce <a href="${href("giris.html")}">giriş yap</a>.</div>`;
   const opts = flat().map((b) => `<option value="${b.slug}" ${b.slug === pre ? "selected" : ""}>${metaOf(b.slug).label} ${esc(b.name)}</option>`).join("");
   return `<form class="composer" id="compose"><h2>Yeni konu</h2><label>Bölüm</label><select name="board">${opts}</select><label>Başlık</label><input name="title" required /><label>İleti</label><textarea name="body" required></textarea><button class="btn" type="submit">Konuyu aç</button></form>`;
 }
@@ -434,19 +443,19 @@ function search(q) {
 }
 
 function members() {
-  return `<section class="cat"><h2>Üye listesi</h2><table class="threads"><tr><th>No</th><th>Ad</th><th>Kullanıcı</th><th>Rütbe</th></tr>${db.users.map((u) => `<tr><td class="num">${u.id}</td><td><a href="${href("uye/" + u.id)}">${esc(u.name)}</a></td><td>${esc(u.username)}</td><td>${esc(u.rank || "Üye")}</td></tr>`).join("")}</table></section>`;
+  return `<section class="cat"><h2>Üye listesi</h2><table class="threads"><tr><th>No</th><th>Ad</th><th>Kullanıcı</th><th>Rütbe</th></tr>${db.users.map((u) => `<tr><td class="num">${u.id}</td><td><a href="${href("uye/" + u.id + ".html")}">${esc(u.name)}</a></td><td>${esc(u.username)}</td><td>${esc(u.rank || "Üye")}</td></tr>`).join("")}</table></section>`;
 }
 function member(id) {
   const u = user(Number(id));
   if (!u.id) return `<div class="welcome">Üye yok.</div>`;
   const topics = db.topics.filter((t) => t.userId === u.id);
-  return `<div class="crumb"><a href="${href("uyeler")}">Üyeler</a> → ${esc(u.name)}</div><section class="cat"><h2><span class="no">${u.id}</span>${esc(u.name)}</h2><div class="note">@${esc(u.username)} · ${esc(u.rank || "Üye")}</div><table class="threads">${topics.map((t) => `<tr><td><a href="${href(threadPath(t))}">${esc(t.title)}</a></td></tr>`).join("") || `<tr><td>Konu yok.</td></tr>`}</table></section>`;
+  return `<div class="crumb"><a href="${href("uyeler.html")}">Üyeler</a> → ${esc(u.name)}</div><section class="cat"><h2><span class="no">${u.id}</span>${esc(u.name)}</h2><div class="note">@${esc(u.username)} · ${esc(u.rank || "Üye")}</div><table class="threads">${topics.map((t) => `<tr><td><a href="${href(threadPath(t))}">${esc(t.title)}</a></td></tr>`).join("") || `<tr><td>Konu yok.</td></tr>`}</table></section>`;
 }
 
 function bind() {
   document.getElementById("reply")?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const id = currentThreadId();
+    const id = currentThread()?.id;
     const body = String(new FormData(e.target).get("body") || "").trim();
     if (body.length < 2) return;
     const t = db.topics.find((x) => x.id === id);
@@ -465,7 +474,7 @@ function bind() {
     db.topics.push({ id, board: slug, userId: db.me, title, pinned: false, locked: false, views: 0, last: Date.now(), created: Date.now() });
     db.posts.push({ id: nextId(db.posts), topicId: id, userId: db.me, body, created: Date.now() });
     bump(slug, 1);
-    save(); go(metaOf(slug).path + "k/" + id);
+    save(); go(threadPath(db.topics.find((x) => x.id === id)));
   });
   document.getElementById("auth")?.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -477,52 +486,49 @@ function bind() {
       if (db.users.some((u) => u.username.toLowerCase() === username.toLowerCase())) { err.hidden = false; err.textContent = "Bu ad alınmış."; return; }
       const id = nextId(db.users);
       db.users.push({ id, username, password, name: String(f.get("name") || username), rank: "Üye", admin: false });
-      db.me = id; save(); go(""); return;
+      db.me = id; save(); go("index.html"); return;
     }
     const found = db.users.find((u) => u.username === username && u.password === password);
     if (!found) { err.hidden = false; err.textContent = "Nick veya şifre uyuşmuyor."; return; }
-    db.me = found.id; save(); go("");
+    db.me = found.id; save(); go("index.html");
   });
   document.getElementById("find")?.addEventListener("submit", (e) => {
     e.preventDefault();
-    go("arama/?q=" + encodeURIComponent(new FormData(e.target).get("q") || ""));
+    go("arama.html?q=" + encodeURIComponent(new FormData(e.target).get("q") || ""));
   });
   document.querySelectorAll("[data-act]").forEach((btn) => btn.addEventListener("click", () => {
-    const id = currentThreadId();
+    const id = currentThread()?.id;
     const t = db.topics.find((x) => x.id === id);
     if (!t || !me()?.admin) return;
     const act = btn.getAttribute("data-act");
     if (act === "pin") t.pinned = !t.pinned;
     if (act === "lock") t.locked = !t.locked;
-    if (act === "del") { db.topics = db.topics.filter((x) => x.id !== id); db.posts = db.posts.filter((p) => p.topicId !== id); save(); go(""); return; }
+    if (act === "del") { db.topics = db.topics.filter((x) => x.id !== id); db.posts = db.posts.filter((p) => p.topicId !== id); save(); go("index.html"); return; }
     save(); route();
   }));
 }
 
 function locate(parts) {
-  const cn = Number(parts[0]);
-  const cat = db.cats[cn - 1];
+  const catIndex = db.cats.findIndex((c) => fileSlug(c.title) === parts[0]);
+  const cat = db.cats[catIndex];
   if (!cat) return null;
-  if (parts.length === 1) return { kind: "cat", index: cn - 1 };
-  const bn = Number(parts[1]);
-  const board = cat.boards[bn - 1];
+  if (parts.length === 1) return { kind: "cat", index: catIndex };
+  const board = cat.boards.find((b) => fileSlug(b.name) === parts[1]);
   if (!board) return null;
   if (parts.length === 2) return { kind: "board", slug: board.slug };
-  if (parts[2] === "k") return { kind: "thread", id: parts[3] };
+  const sub = (board.subs || []).find((s) => fileSlug(s.name) === parts[2]);
+  if (sub && parts.length === 3) return { kind: "board", slug: sub.slug };
+  if (sub && parts[3] === "yeni") return { kind: "yeni", slug: sub.slug };
   if (parts[2] === "yeni") return { kind: "yeni", slug: board.slug };
-  const sn = Number(parts[2]);
-  const sub = (board.subs || [])[sn - 1];
-  if (!sub) return null;
-  if (parts[3] === "k") return { kind: "thread", id: parts[4] };
-  if (parts[3] === "yeni") return { kind: "yeni", slug: sub.slug };
-  return { kind: "board", slug: sub.slug };
+  const topic = db.topics.find((t) => fileSlug(t.title) === parts[parts.length - 1] && (t.board === (sub ? sub.slug : board.slug) || t.board === board.slug));
+  return topic ? { kind: "thread", id: topic.id } : null;
 }
 
 function route() {
   const parts = segments();
   const q = new URLSearchParams(location.search);
   let html = home();
-  const hit = /^\d+$/.test(parts[0] || "") ? locate(parts) : null;
+  const hit = parts[0] ? locate(parts) : null;
   if (hit?.kind === "cat") html = home(hit.index);
   else if (hit?.kind === "board") html = boardView(hit.slug);
   else if (hit?.kind === "thread") html = thread(hit.id);
@@ -547,5 +553,5 @@ document.addEventListener("click", (e) => {
   route();
 });
 window.addEventListener("popstate", route);
-if (location.hash.startsWith("#/")) history.replaceState({}, "", href(""));
+if (location.hash.startsWith("#/")) history.replaceState({}, "", href("index.html"));
 route();
