@@ -11,7 +11,7 @@ let data = empty();
 if (fs.existsSync(file)) {
   try { data = { ...empty(), ...JSON.parse(fs.readFileSync(file, "utf8")) }; } catch { data = empty(); }
 }
-if (!Array.isArray(data.forums)) {
+if (!Array.isArray(data.forums) || !data.forums.length) {
   data.forums = (data.categories || []).map((c) => ({ id: c.id, category_id: c.id, parent_id: 0, title: c.title, description: c.description || "", position: c.position || c.id }));
   data.seq.forums = Math.max(data.seq.forums || 1, ...data.forums.map((f) => f.id), 0) + 1;
   (data.topics || []).forEach((t) => { if (!t.forum_id) t.forum_id = t.category_id; });
