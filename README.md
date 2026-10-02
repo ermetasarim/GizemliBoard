@@ -1,10 +1,24 @@
 # GizemliBoard
 
-8 Şubat 2010 arşivindeki gizemliboard.net kategori ve konu düzeni. Bölüm adları, alt forumlar, konu / mesaj sayıları ve son iletiler o günkü anasayfadan alındı.
+Kayıt, giriş, konu ve yanıtların sunucudaki SQLite dosyasında durduğu forum.
 
-`index.html` dosyasını aç.
+## Çalıştırma
 
-- Yönetici: admin / GbAdmin2007
-- Üye: demo / 123456
+```bash
+npm install
+npm start
+```
 
-Kaynak: https://web.archive.org/web/20100208133219/http://gizemliboard.net/
+Tarayıcı: http://localhost:3000
+
+İlk açılışta yönetici oluşur:
+
+- nick: `admin`
+- şifre: `admin123`
+
+Girişten sonra şifreyi değiştir. Kategoriler boşsa dört bölüm kendiliğinden açılır. Üye kaydı, konu ve yanıt veritabanına yazılır; sunucu kapanınca silinmez.
+
+Ortam değişkenleri:
+
+- `PORT` varsayılan `3000`
+- `SESSION_SECRET` oturum imzası

@@ -1,0 +1,40 @@
+:root { --orange: #e36b00; --deep: #c45500; --ink: #3a2a1c; --line: #e4c7a2; --paper: #fffaf4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #f6e7d4; color: var(--ink); font: 14px/1.45 Tahoma, Verdana, sans-serif; }
+a { color: #9a3e00; text-decoration: none; }
+a:hover { text-decoration: underline; }
+button, input, textarea, select { font: inherit; }
+.wrap { width: min(980px, calc(100% - 16px)); margin: 16px auto 32px; background: var(--paper); border: 1px solid #d7b48a; }
+.top { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 14px; background: #e36b00; }
+.mark img { height: 64px; width: auto; display: block; border-radius: 4px; }
+.tools { color: #fff8ee; text-align: right; }
+.tools a, .tools button { color: #fff; background: none; border: 0; cursor: pointer; padding: 0 4px; }
+.nav { display: flex; gap: 14px; padding: 8px 14px; background: var(--deep); }
+.nav a { color: #fff8ee; }
+.flash { margin: 10px; padding: 8px 10px; background: #fff1dc; border: 1px solid var(--line); }
+.err { background: #fde8e6; color: #b42318; }
+.cat, .box { margin: 10px; border: 1px solid #d7b48a; background: #fff; }
+h2 { margin: 0; padding: 7px 10px; background: linear-gradient(#f08a22, #d35400); color: #fff8ee; font-size: 14px; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; background: #fff1dc; color: #8a3d00; padding: 6px 8px; }
+td { padding: 8px; border-top: 1px solid #f0e0cc; vertical-align: top; }
+tr:hover td { background: #fff8f0; }
+.num { width: 80px; text-align: center; }
+.last { width: 220px; color: #6d5340; }
+.board { font-weight: bold; }
+.desc { color: #8a6a4a; font-size: 12px; }
+.crumb { margin: 10px; color: #7a4e28; }
+.post { display: grid; grid-template-columns: 180px 1fr; border-top: 1px solid #f0e0cc; }
+.post:first-child { border-top: 0; }
+.who { background: #fff8f0; padding: 12px; border-right: 1px solid #f0e0cc; }
+.rank { color: #b42318; font-size: 11px; text-transform: uppercase; }
+.body { padding: 12px; white-space: pre-wrap; }
+.when { color: #8a6a4a; font-size: 11px; margin-bottom: 8px; }
+form.box, .composer { margin: 10px; padding: 12px; }
+label { display: block; margin: 8px 0 3px; }
+input, textarea, select { width: 100%; border: 1px solid #e4c7a2; padding: 7px; background: #fff; }
+textarea { min-height: 140px; }
+.btn { display: inline-block; margin-top: 8px; background: var(--deep); color: #fff8ee; border: 1px solid #9a3e00; padding: 6px 12px; cursor: pointer; }
+.ghost { background: #fff1dc; color: #8a3d00; }
+.foot { padding: 10px 14px 16px; color: #8a6a4a; font-size: 12px; }
+@media (max-width: 700px) { .post, .top { display: block; } .num, .last { width: auto; } }
