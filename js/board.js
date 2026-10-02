@@ -1,123 +1,339 @@
-const KEY = "gizemliboard-v1";
+const KEY = "gizemliboard-v2";
+const dt = (y, m, d, h, min) => new Date(y, m - 1, d, h, min).getTime();
+
+const sub = (slug, name, topics, posts) => ({ slug, name, desc: "", archiveTopics: topics || 0, archivePosts: posts || 0 });
+const board = (slug, name, desc, topics, posts, subs) => ({ slug, name, desc, archiveTopics: topics, archivePosts: posts, subs: subs || [] });
+
 const seed = () => ({
   me: null,
   users: [
     { id: 1, username: "admin", password: "GbAdmin2007", name: "Yönetim", rank: "Admin", admin: true },
     { id: 2, username: "demo", password: "123456", name: "Kardesturk", rank: "Üye", admin: false },
-    { id: 3, username: "queen", password: "123456", name: "queen", rank: "Moderatör", admin: false }
+    { id: 3, username: "weled", password: "123456", name: "ฬΣLéⓓ™", rank: "Üye", admin: false },
+    { id: 4, username: "real", password: "123456", name: "Real", rank: "Üye", admin: false },
+    { id: 5, username: "olumcul", password: "123456", name: "Ölümcül_Yarış", rank: "Üye", admin: false },
+    { id: 6, username: "kajmeroloji", password: "123456", name: "Kajmeroloji", rank: "Üye", admin: false },
+    { id: 7, username: "rapchi", password: "123456", name: "RapchiSheqeR", rank: "Üye", admin: false },
+    { id: 8, username: "ashilles", password: "123456", name: "Ashilles", rank: "Üye", admin: false },
+    { id: 9, username: "burakhayta", password: "123456", name: "burakhayta", rank: "Üye", admin: false },
+    { id: 10, username: "ademsencer", password: "123456", name: "ademsencer", rank: "Üye", admin: false },
+    { id: 11, username: "ataturk", password: "123456", name: "Atatürk*", rank: "Üye", admin: false },
+    { id: 12, username: "yaban", password: "123456", name: "YABAN", rank: "Üye", admin: false },
+    { id: 13, username: "macleod", password: "123456", name: "MacleoD", rank: "Üye", admin: false },
+    { id: 14, username: "kzd2", password: "123456", name: "kzd2\"", rank: "Üye", admin: false }
   ],
   cats: [
-    { title: "~~~~ TANIŞ - KAYNAŞ - ANLAŞ ~~~~", boards: [
-      ["hosgeldiniz", "HOŞGELDİNİZ", "Hoşgeldiniz mesajları buraya", "Yönetim"],
-      ["duyuru", "GB DUYURULAR", "Admin arkadaşlardan başka kimse duyuru açamaz", "Yönetim"],
-      ["haftanin", "HAFTANIN ÜYESİ", "Unutma bir gün sıra sana da gelebilir!", "Yönetim"],
-      ["yarisma", "YARIŞMALAR", "Ara ara yapılan dağıtımlar, ödüllü yarışmalar.", "Yönetim"],
-      ["sorun", "SORUN SÖYLEYELİM", "Yeni üyeler için öğrenmek istediğiniz şeyler.", "Yönetim"],
-      ["radyo", "RADYO GB", "Tebrik ve istek mesajları.", "DJ Exselans"]
+    { title: "GizemliBoard Hakkında", boards: [
+      board("duyuru", "GizemliBoard Duyurular&Kurallar", "Forum hakkında tum duyuru ve kurallar", 10, 19),
+      board("yarisma", "GizemliBoard Yarışmalar", "GizemliBoard Yarışmaları ile ilgili son sürat bilgi", 9, 38),
+      board("oneri", "Öneri, Şikayet, Soru ve Sorunlarınız", "Her türlü önerinizi veya şikayetinizi yönetime buradan iletebilirsiniz", 1, 2),
+      board("kutlama", "Kutlama ve Duyurularınız", "Kullanıcılar arası duyurular, doğum günü kutlamaları, diger özel gün ve gecelerle ilgili duyuru ve kutlamalarıda bu başlık altında yapabilirsiniz.", 3, 18),
+      board("tanitin", "Kendinizi Tanıtın", "Pişşt sen yenisin galiba:)", 12, 66)
     ]},
-    { title: "~~~~ EĞLENCE ( FUN ) ~~~~", boards: [
-      ["ciddi", "CİDDİ VE SEVİYELİ KONULAR", "Her tür ciddi konu burada tartışılır.", "SeZoCaN"],
-      ["muhabbet", "MUHABBET KUŞLARI", "Muhabbet olmadan olmaz diyenler.", "mini_cooper"],
-      ["oyunlar", "FORUM OYUNLARI", "Games takılanlar buraya.", "CiCiTuRK"],
-      ["siir", "GB ŞİİR BÖLÜMÜ", "Şiir sevenler derneği.", "ProfessionaL"],
-      ["anket", "ANKETLER", "Anketlerimiz burada.", "KACMAZ"],
-      ["sozluk", "GB SÖZLÜK", "GB sözlük artık sizlerle.", "Yönetim"]
+    { title: "Genel", boards: [
+      board("vatan", "Vatan TC", "", 23, 37, [
+        sub("ataturk-kosesi", "Mustafa Kemal ATATÜRK", 18, 21),
+        sub("osmanli", "Osmalı Tarihi", 3, 13),
+        sub("cennet", "Cennet Ülkemizden Resimler", 2, 3),
+        sub("yoreler", "Yöreler Ve Kültürümüz", 0, 0)
+      ]),
+      board("ulkeler", "Ülkeler Tarihi", "Tüm Ülkelerin Tarihleri ve Resimleri", 1, 1),
+      board("kultur", "Genel Kültür", "", 19, 19, [
+        sub("kultur-sanat", "Kültür & Sanat", 19, 19),
+        sub("sinema-tiyatro", "Sinema & Tiyatro", 0, 0),
+        sub("biyografi", "Biyografiler", 0, 0),
+        sub("mitoloji", "Mitolojiler", 0, 0),
+        sub("edebiyat", "Edebiyat & Felsefe", 0, 0)
+      ]),
+      board("haber", "Güncel Haberler", "Güncel Konu ve Haberleri Paylaşabileceğiniz Alan!", 10, 12),
+      board("hertelden", "Her Telden", "", 861, 893, [
+        sub("ruya", "Rüya Tabirleri", 85, 85),
+        sub("teknoloji", "Teknoloji & Bilim", 0, 0),
+        sub("efsane", "Efsaneler & Garip Olaylar", 11, 20),
+        sub("saglik", "Sağlık", 0, 0),
+        sub("motor", "Motorlu Araçlar & Modifiye", 3, 5),
+        sub("kursu", "Serbest Kürsü", 762, 783)
+      ])
     ]},
-    { title: "~~~~ KÜLTÜR & SANAT ve HABERLER ~~~~", boards: [
-      ["ataturk", "M.KEMAL ATATÜRK", "Cumhuriyet ve Atatürk başlıkları.", "Yönetim"],
-      ["kultur", "GENEL KÜLTÜR", "Bilgi, haber ve merak.", "Yönetim"],
-      ["bilmece", "ZEKA OYUNLARI VE BİLMECELER", "Kısa sorular, uzun cevaplar.", "Yönetim"],
-      ["memleket", "MEMLEKETİMİZ", "Şehirler ve hatıralar.", "Yönetim"]
+    { title: "Eglence - Sohbet", boards: [
+      board("anket", "GizemliBoard Anket", "GizemliBoard Anketleri Açabileceğiniz Alan", 3, 15),
+      board("muhabbet", "[GB]Muhabbet Cafe", "Hem geyik Hem muhabbet:)", 1, 5),
+      board("merak", "Merak Ettikleriniz", "Meraklısına ;)", 2, 2),
+      board("bilmece", "Bilmece Ve Bulmacalar", "Bilmece Ve Bulmacalar Birbirinize Sorabileceğiniz Alan", 2, 2),
+      board("fan", "Fan Clup", "Hayranı Olduğunuz Kişilerin Fan Clup Açabilirsiniz", 2, 6),
+      board("fikra", "Fıkralar Ve Komik Yazılar", "GizemliBoard Ailesi Olarak Biraz Gülmeye Ne Dersiniz :)", 59, 61),
+      board("itiraf", "Kişisel İtiraflar", "Her Türlü İtiraflarınızı Buradan Paylaşabilirsiniz(Kırıcı Olmadan)", 1, 1),
+      board("hobi", "Hobiler & Fobiler", "Hobi ve Fobilerimizi Paylaşalım", 3, 5)
     ]},
-    { title: "~~~~ GB'DEN AŞKIM BÖLÜMÜ ~~~~", boards: [
-      ["askim", "GB'DEN AŞKIM AŞKIM", "Aşk başlıkları.", "Yönetim"],
-      ["itiraf", "İTİRAF EDİYORUM", "İçinden geçeni bırak.", "Yönetim"],
-      ["dert", "DERT ORTAĞI", "Dertleşmek serbest.", "Yönetim"]
+    { title: "Gizemli Board", boards: [
+      board("dergi", "Dergi", "Aylık(?) Kültür(?) Yaşam(?) Magazin(?) Dergisi", 1, 1),
+      board("roportaj", "Röportaj", "Üyelerle Röportajlar ;)", 1, 1),
+      board("radyo", "Radyo", "", 1, 1),
+      board("magazin", "Magazin", "Forumda neler oluyor, son dakika haberleri", 0, 0),
+      board("sorgu", "Sorgu Odası", "Sorgulamaya ve sorgulanmaya hazırmısınız ?", 1, 1),
+      board("sehir", "Sehir", "Buyrun sizinde bir yapıtınız olsun :)", 1, 4),
+      board("gunluk", "Günlük", "Sanal Günlügünüz", 0, 0),
+      board("sozluk", "Sözlük", "Güncel kelimeler ve yorumlarınız", 0, 0),
+      board("takvim", "Takvim", "Tarihte Bugün", 0, 0)
     ]},
-    { title: "~~~~ SPOR DÜNYASI ~~~~", boards: [
-      ["futbol", "FUTBOL HABER", "Maç, transfer, tribün.", "Yönetim"],
-      ["fb", "FENERBAHÇE", "Sarı lacivert masa.", "Yönetim"],
-      ["gs", "GALATASARAY", "Sarı kırmızı masa.", "Yönetim"],
-      ["ts", "TRABZONSPOR", "Bordo mavi masa.", "Yönetim"]
+    { title: "Resim - Sarkı Sözleri", boards: [
+      board("resim", "Resim Ve Wallpapers Galeri", "Resim Ve Wallpapersleri Burada Bulabilirsiniz", 25, 30, [
+        sub("korku", "Korku-Gerilim +18", 0, 0),
+        sub("masaustu", "Masaüstü - Wallpapers", 0, 0),
+        sub("dini-resim", "Dini Resim", 0, 0),
+        sub("komik-resim", "Komik Resimler", 15, 15),
+        sub("ulke-resim", "Ülkelerden Resimler", 1, 1),
+        sub("manzara", "Manzara-Doğa Resimleri", 7, 12),
+        sub("konu-disi", "Konu Dışı Resimler", 2, 2)
+      ]),
+      board("muzik", "Müzik - Şarkı Sözleri ( Lyrics )", "Son çıkan albümler , çıkacak olan albümler , Müzik Sohbet , Yerli Yabancı Şarkı Sözleri", 54, 69, [
+        sub("tr-sarki", "Türkçe Şarkı Sözleri", 47, 58),
+        sub("yb-sarki", "Yabancı Şarkı Sözleri", 7, 11),
+        sub("muzik-sohbet", "Müzik Sohbet", 0, 0),
+        sub("album", "Albüm Tanıtımları", 0, 0)
+      ])
     ]},
-    { title: "~~~~ BOARD ÖZEL ~~~~", boards: [
-      ["fikir", "FİKRİM GELDİ DİYENLER", "Pano için öneri.", "Yönetim"],
-      ["test", "BOARD KARANTİNA VE TEST ODASI", "Deneme konuları.", "Yönetim"]
+    { title: "Tv Dizileri - Sinema - Video", boards: [
+      board("diziler", "TV Dizileri", "TV Dizileri Burada Bulabilirsiniz", 10, 11, [
+        sub("arka-sira", "Arka Sıradakiler", 1, 1),
+        sub("arka-sokak", "Arka Sokaklar", 0, 0),
+        sub("akasya", "Akasya Durağı", 6, 6),
+        sub("ask-i-memnu", "Aşk-ı Memnu", 0, 0),
+        sub("ask-hayal", "Aşk Bir Hayal", 0, 0),
+        sub("adanali", "Adanalı", 0, 0),
+        sub("melek-annem", "Benim Annem Bir Melek", 0, 0),
+        sub("bulut", "Bir Bulut Olsam", 0, 0),
+        sub("cghb", "Çok Güzel Hareketler Bunlar", 0, 0),
+        sub("genis-aile", "Geniş Aile", 2, 2),
+        sub("hanim", "Hanımın Çiftliği", 0, 0),
+        sub("melekler", "Melekler Korusun", 0, 0),
+        sub("haneler", "Haneler", 0, 0),
+        sub("sakarya", "Sakarya Fırat", 0, 0),
+        sub("diger-dizi", "Diğer Türk Dizileri", 1, 2)
+      ]),
+      board("pusu", "Kurtlar Vadisi Pusu", "", 0, 0, [
+        sub("pusu-resim", "Kurtlar Vadisi Pusu Resimleri", 0, 0),
+        sub("pusu-fragman", "Kurtlar Vadisi Pusu Fragmanlar", 0, 0),
+        sub("pusu-muzik", "Kurtlar Vadisi Pusu Müzikler", 0, 0),
+        sub("pusu-bolum", "Kurtlar Vadisi Pusu Bölüm Download", 0, 0)
+      ]),
+      board("ezel", "EZEL", "", 6, 7, [
+        sub("ezel-resim", "EZEL Resimleri", 6, 7),
+        sub("ezel-fragman", "EZEL Fragmanlar", 0, 0),
+        sub("ezel-muzik", "EZEL Müzikler", 0, 0),
+        sub("ezel-bolum", "EZEL Bölüm Download", 0, 0)
+      ]),
+      board("yerli-film", "Yerli Film Download", "Türk Yapımı Filmleri Buradan İndirebilirsiniz", 0, 0),
+      board("yabanci-film", "Yabancı Film Download", "Yabancı Filmleri Buradan İndirebilirsiniz", 0, 0),
+      board("online-sinema", "Online Sinema İzle", "Online Olarak Filmleri İzleyebilirsiniz", 0, 0)
+    ]},
+    { title: "Program - Msn - Oyun", boards: [
+      board("program", "Program Paylasım", "Bilgisayar Yazılımları,Oyunları,Msn", 38, 48, [
+        sub("program-dl", "Program Download", 32, 42),
+        sub("anlatim", "Resimli Program Anlatımlar", 1, 1),
+        sub("isletim", "İşletim Sistemleri", 5, 5),
+        sub("donanim", "Donanım", 0, 0),
+        sub("driver", "Driver", 0, 0),
+        sub("istek", "Program İstek", 0, 0),
+        sub("destek", "Teknik Destek & İpuçları", 0, 0)
+      ]),
+      board("msn", "MSN Messenger - Windows Live Messenger", "MSN Messenger - Windows Live Messenger teknikleri yamaları Sorunları Çözümleri", 4, 5, [
+        sub("msn-destek", "Messenger Destek Ve Bilgiler", 0, 0),
+        sub("msn-diger", "Diğer MSN Programları", 0, 0),
+        sub("msn-versiyon", "Messenger Versiyonları", 1, 1),
+        sub("msn-arayuz", "Arayüz Ve İfadeler", 0, 0),
+        sub("msn-nick", "Msn Messenger Nickleri", 3, 4)
+      ]),
+      board("oyun", "Oyun", "Pc Ve Sanal Oyunlar Hileleri Teknikleri", 10, 10, [
+        sub("oyun-dl", "Oyun Download", 6, 6),
+        sub("oyun-hile", "Oyun Hileleri", 4, 4),
+        sub("oyun-yama", "Oyun Yamaları", 0, 0),
+        sub("flash", "Flash Oyunlar", 0, 0),
+        sub("inceleme", "İncelemeleri ve Çıkacaklar", 0, 0)
+      ]),
+      board("online-oyun", "Online Oyun", "", 10, 12, [
+        sub("knight", "Knight Online", 1, 1),
+        sub("metin2", "Metin2", 6, 6),
+        sub("karahan", "Karahan Online", 1, 1),
+        sub("diger-oyun", "Diğer Online Oyunlar", 2, 4)
+      ]),
+      board("photoshop", "Photoshop Cs2 - Cs3 - Cs4", "Photoshop Download,Anlatımlar,Plug-in,Fontlar,Brush Ve Styles", 1, 1, [
+        sub("ps-dl", "Photoshop Cs2 Cs3 Cs4 Download", 1, 1),
+        sub("ps-anlatim", "Resimli Ve Videolu Anlatımlar", 0, 0),
+        sub("font", "Fontlar", 0, 0),
+        sub("plugin", "Plug-in,Brush,Styles", 0, 0),
+        sub("psd", "Psd / Png / ico İconlar", 0, 0),
+        sub("grafik", "Grafik/Resim/PSD/PNG /Vector", 0, 0)
+      ])
+    ]},
+    { title: "Cep Telefonu", boards: [
+      board("melodi", "Cep Melodiler", "", 1, 1),
+      board("cep-oyun", "Cep Oyun Download", "", 3, 6),
+      board("cep-resim", "Cep Resim ve Videolar", "", 0, 0),
+      board("cep-program", "Cep Programlar", "", 0, 0),
+      board("cep-teknik", "Teknik Bilgiler", "", 0, 0)
+    ]},
+    { title: "Webmaster - Vbulletin", boards: [
+      board("vb-destek", "Vbulletin Destek", "", 0, 0),
+      board("wm-genel", "Webmaster Genel Konular Sorunlar", "Genel Sorunlar ve Çözümleri", 0, 0),
+      board("link", "Link Değişimi", "Link Değişim Alanı", 0, 0, [
+        sub("backlink", "Backlink Değişimi", 0, 0),
+        sub("banner", "Banner Değişimi", 0, 0),
+        sub("link-istek", "Link değişimi İstek ve Sorunlarınız", 0, 0)
+      ]),
+      board("wm-program", "Webmaster Programlar", "", 0, 0, [
+        sub("wm-prog", "Webmaster Programları", 0, 0),
+        sub("wm-yardim", "Program yardım", 0, 0)
+      ]),
+      board("web2", "Web 2.0", "Web 2.0 standartları, felsefesi...", 0, 0),
+      board("server", "Site & Server Administration", "Linux/unix windows serverlar, sorunları çözümleri vb", 1, 1, [
+        sub("guvenlik", "Site Güvenliği & Saldırılar", 0, 0),
+        sub("cpanel", "Cpanel & Plesk", 0, 0),
+        sub("optimizasyon", "Server Optimizasyon", 1, 1),
+        sub("linux", "Linux", 0, 0),
+        sub("windows", "Windows", 0, 0)
+      ])
+    ]},
+    { title: "Spor Dünyası", boards: [
+      board("spor", "Spor", "Futbol,Voleybol,Basketbol ve Diğerleri", 4, 4, [
+        sub("milli", "Milli Takım", 0, 0),
+        sub("gs", "GalataSaray", 0, 0),
+        sub("fb", "FenerBahçe", 4, 4),
+        sub("ts", "TrabzonSpor", 0, 0),
+        sub("bjk", "BeşikTaş", 0, 0),
+        sub("anadolu", "Anadolu Takımları", 0, 0),
+        sub("avrupa", "Avrupa'dan Futbol", 0, 0),
+        sub("basket", "Basketbol", 0, 0),
+        sub("voleybol", "Voleybol", 0, 0),
+        sub("diger-brans", "Diğer Branşlar", 0, 0)
+      ])
+    ]},
+    { title: "GizemliBoard Çöplüğü", boards: [
+      board("cop", "Çöp Kutusu", "Bütün Sorunlu Konular Burada Toplanır...", 1, 40)
     ]}
   ],
-  topics: [
-    { id: 1, board: "hosgeldiniz", userId: 1, title: "GizemliBoard'a hoş geldiniz", pinned: true, locked: false, views: 2773, last: Date.now() - 3600000, created: Date.now() - 86400000 * 40 },
-    { id: 2, board: "duyuru", userId: 3, title: "Duyuru açma kuralı", pinned: false, locked: false, views: 295, last: Date.now() - 7200000, created: Date.now() - 86400000 * 12 },
-    { id: 3, board: "muhabbet", userId: 2, title: "Muhabbet olmadan olmaz", pinned: false, locked: false, views: 2038, last: Date.now() - 5400000, created: Date.now() - 86400000 * 8 },
-    { id: 4, board: "ataturk", userId: 1, title: "İyisi ile kötüsü ile 1. senemiz", pinned: false, locked: false, views: 640, last: Date.now() - 86400000, created: Date.now() - 86400000 * 20 }
-  ],
-  posts: [
-    { id: 1, topicId: 1, userId: 1, body: "Eylül 2007 arşivindeki pano düzeni. Kategoriler o günkü GizemliBoard listesinden alındı. Yazılar bu tarayıcıda durur.", created: Date.now() - 86400000 * 40 },
-    { id: 2, topicId: 1, userId: 2, body: "Hoş geldiniz masasına ilk yanıt.", created: Date.now() - 3600000 },
-    { id: 3, topicId: 2, userId: 3, body: "Duyuruyu yönetim açar. Diğer üyeler yanıt yazabilir.", created: Date.now() - 7200000 },
-    { id: 4, topicId: 3, userId: 2, body: "Muhabbet kuşu buraya konar.", created: Date.now() - 5400000 },
-    { id: 5, topicId: 4, userId: 1, body: "Arşiv alt bilgisi: Burning Board 2.3.6, Style By Delikan. Crocodile teması 1219 kişi tarafından seçiliydi.", created: Date.now() - 86400000 }
-  ]
+  topics: [],
+  posts: []
 });
 
-let db = JSON.parse(localStorage.getItem(KEY) || "null") || seed();
+const lastPosts = [
+  ["duyuru", 3, "Rapid Premium Satıslarımız...", dt(2010, 2, 8, 11, 15)],
+  ["yarisma", 4, "Rep promosyonu Üye ol kap...", dt(2010, 2, 7, 23, 3)],
+  ["oneri", 5, "Öneri,Şikayet Soru &...", dt(2010, 2, 1, 23, 57)],
+  ["kutlama", 6, "100.Mesaj oldum", dt(2010, 2, 6, 17, 38)],
+  ["tanitin", 7, "cümleten merhaba :)", dt(2010, 2, 6, 11, 57)],
+  ["vatan", 8, "OSMANLI TARiHİ KRONOLOJİSİ", dt(2010, 2, 5, 13, 50)],
+  ["ulkeler", 3, "Afganİstan", dt(2010, 1, 27, 18, 32)],
+  ["kultur", 3, "Baki Kuru", dt(2010, 1, 27, 18, 47)],
+  ["haber", 4, "Demet Akalın evlendi", dt(2010, 2, 2, 22, 21)],
+  ["hertelden", 3, "bir satanistin hikayesi", dt(2010, 2, 3, 12, 55)],
+  ["anket", 5, "Sizce en yakışıklı futbolcu...", dt(2010, 1, 30, 13, 24)],
+  ["muhabbet", 3, "Muhabbet Bölümü", dt(2010, 1, 29, 14, 9)],
+  ["merak", 9, "Cola'nın yararları", dt(2010, 1, 26, 20, 11)],
+  ["bilmece", 5, "Temel ile ilgili fıkralar", dt(2010, 1, 30, 22, 56)],
+  ["fan", 5, "Geniş Aile Ufuk Ozkan Hakkında", dt(2010, 2, 2, 21, 33)],
+  ["fikra", 10, "Fizikçi,Kimyacı ve Ekonomist...", dt(2010, 2, 3, 0, 58)],
+  ["itiraf", 3, "Evet itiraf ediyorum.", dt(2010, 1, 28, 9, 56)],
+  ["hobi", 7, "Hobilerim & Fobilerim", dt(2010, 2, 6, 12, 5)],
+  ["dergi", 5, "Dergi", dt(2010, 2, 2, 0, 2)],
+  ["roportaj", 11, "Röportaj Önerileri", dt(2010, 1, 26, 17, 34)],
+  ["radyo", 5, "Radyo", dt(2010, 2, 2, 0, 4)],
+  ["sorgu", 5, "Sorgu ve sorgulama bölümü", dt(2010, 2, 2, 0, 11)],
+  ["sehir", 12, "[GB]Hastahane", dt(2010, 1, 25, 16, 20)],
+  ["resim", 5, "Manzara", dt(2010, 2, 2, 21, 34)],
+  ["muzik", 7, "Evanescence-Lithium", dt(2010, 2, 2, 15, 38)],
+  ["diziler", 13, "akasya duragı", dt(2010, 2, 3, 0, 18)],
+  ["ezel", 13, "ezel 5", dt(2010, 2, 2, 23, 29)],
+  ["program", 4, "ULtraXp PLus Version 2oo9 DVD...", dt(2010, 2, 7, 23, 20)],
+  ["msn", 5, "msn ye yazılacak bikaç nick", dt(2010, 1, 30, 11, 58)],
+  ["oyun", 5, "GTA 4 hile", dt(2010, 1, 30, 12, 4)],
+  ["online-oyun", 3, "Metin2 2009.05.26", dt(2010, 1, 30, 14, 23)],
+  ["photoshop", 3, "Adobe PhotoShop CS2 9", dt(2010, 1, 28, 10, 12)],
+  ["melodi", 3, "Nil KaraibrahimqiL_C0LA TURKA", dt(2010, 1, 28, 10, 15)],
+  ["cep-oyun", 3, "Fifa Street 2 Cep telefonu...", dt(2010, 2, 5, 19, 22)],
+  ["server", 5, "Server OPTİMİZASYON", dt(2010, 1, 30, 12, 8)],
+  ["spor", 3, "Santos'un önü açıldı", dt(2010, 1, 30, 15, 0)],
+  ["cop", 3, "Kelime Bulma Yarışması", dt(2010, 2, 3, 16, 32)]
+];
+
+function fresh() {
+  const db = seed();
+  lastPosts.forEach((row, i) => {
+    const id = i + 1;
+    db.topics.push({ id, board: row[0], userId: row[1], title: row[2], pinned: false, locked: false, views: 0, last: row[3], created: row[3] });
+    db.posts.push({ id, topicId: id, userId: row[1], body: "8 Şubat 2010 arşivindeki son ileti başlığı. Gövde o günkü kayıttan alınmadı.", created: row[3] });
+  });
+  return db;
+}
+
+let db = JSON.parse(localStorage.getItem(KEY) || "null") || fresh();
 const save = () => localStorage.setItem(KEY, JSON.stringify(db));
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&" + "amp;", "<": "&" + "lt;", ">": "&" + "gt;", '"': "&" + "quot;" }[c]));
-const when = (t) => {
-  const m = (Date.now() - t) / 60000;
-  if (m < 60) return "Bugün, " + new Date(t).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
-  if (m < 1440) return "Dün, " + new Date(t).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
-  return new Date(t).toLocaleDateString("tr-TR");
+const num = (n) => Number(n || 0).toLocaleString("tr-TR");
+const vbDate = (t) => {
+  const d = new Date(t);
+  const pad = (n) => String(n).padStart(2, "0");
+  let h = d.getHours();
+  const am = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return `${pad(d.getMonth() + 1)}-${pad(d.getDate())}-${d.getFullYear()} ${pad(h)}:${pad(d.getMinutes())} ${am}`;
 };
 const user = (id) => db.users.find((u) => u.id === id) || { name: "?", username: "?" };
 const me = () => (db.me ? user(db.me) : null);
-const boardOf = (slug) => {
-  for (const c of db.cats) {
-    const b = c.boards.find((x) => x[0] === slug);
-    if (b) return { slug: b[0], name: b[1], desc: b[2], mod: b[3], cat: c.title };
-  }
-  return null;
-};
+const flat = () => db.cats.flatMap((c) => c.boards.flatMap((b) => [Object.assign({ cat: c.title }, b), ...(b.subs || []).map((s) => Object.assign({ cat: c.title, parent: b.name, parentSlug: b.slug }, s))]));
+const boardOf = (slug) => flat().find((b) => b.slug === slug) || null;
 const replies = (id) => Math.max(0, db.posts.filter((p) => p.topicId === id).length - 1);
 const topicsOf = (slug) => db.topics.filter((t) => t.board === slug);
 const nextId = (list) => list.reduce((m, x) => Math.max(m, x.id), 0) + 1;
+const bump = (slug, posts) => {
+  for (const c of db.cats) {
+    const hit = c.boards.find((b) => b.slug === slug) || c.boards.flatMap((b) => b.subs || []).find((s) => s.slug === slug);
+    if (hit) { hit.archiveTopics += 1; hit.archivePosts += posts; return; }
+  }
+};
 
 function chrome() {
   const u = me();
   document.getElementById("tools").innerHTML = u
     ? `${esc(u.name)} · <a href="#/yeni">Yeni konu</a> · <button id="out" type="button">Çıkış</button>`
-    : `<a href="#/giris">Giriş</a> · <a href="#/katil">Üyelik formu</a>`;
+    : `<a href="#/giris">Giriş</a> · <a href="#/katil">Kayıt ol</a>`;
   document.getElementById("out")?.addEventListener("click", () => { db.me = null; save(); route(); });
+  document.getElementById("nav").innerHTML = `<a href="#/">Anasayfa</a>` + db.cats.map((c, i) => `<a href="#/k/${i}">${esc(c.title)}</a>`).join("");
+  document.getElementById("subbar").innerHTML = `<span>Şu an: ${u ? esc(u.name) : "3 ziyaretçi"}</span><span><a href="#/uyeler">Üyeler</a> · <a href="#/arama">Arama</a></span>`;
 }
 
-function home() {
-  const rows = db.cats.map((c) => `<section class="cat"><h2>${esc(c.title)}</h2><table>
-    <tr><th>Forum</th><th class="num">Cevaplar</th><th class="num">Konular</th><th class="last">Son mesaj</th><th class="mod">Moderatörler</th></tr>
-    ${c.boards.map((b) => {
-      const list = topicsOf(b[0]).sort((a, z) => z.last - a.last);
-      const last = list[0];
-      const cevap = list.reduce((n, t) => n + replies(t.id), 0);
-      return `<tr><td><span class="folder"></span><a class="board-name" href="#/b/${b[0]}">${esc(b[1])}</a><div class="desc">${esc(b[2])}</div></td>
-        <td class="num">${cevap}</td><td class="num">${list.length}</td>
-        <td class="last">${last ? `${esc(last.title)}<br>${when(last.last)} · ${esc(user(last.userId).name)}` : "Bilgi yok"}</td>
-        <td class="mod">${esc(b[3])}</td></tr>`;
-    }).join("")}
+function boardRow(b) {
+  const list = topicsOf(b.slug).sort((a, z) => z.last - a.last);
+  const last = list[0];
+  const subs = (b.subs || []).map((s) => `<a href="#/b/${s.slug}">${esc(s.name)}${s.archiveTopics ? ` (${num(s.archiveTopics)}/${num(s.archivePosts)})` : ""}</a>`).join("");
+  return `<tr><td><span class="folder${b.archiveTopics ? "" : " off"}"></span><a class="board-name" href="#/b/${b.slug}">${esc(b.name)}</a>${b.desc ? `<div class="desc">${esc(b.desc)}</div>` : ""}${subs ? `<div class="subs">${subs}</div>` : ""}</td>
+    <td class="num">${num(b.archiveTopics)}</td><td class="num">${num(b.archivePosts)}</td>
+    <td class="last">${last ? `<a href="#/t/${last.id}">${esc(last.title)}</a><br>Son yazan ${esc(user(last.userId).name)}<br>${vbDate(last.last)}` : "henüz yok"}</td></tr>`;
+}
+
+function home(only) {
+  const cats = only == null ? db.cats : [db.cats[only]].filter(Boolean);
+  const rows = cats.map((c, i) => `<section class="cat" id="k${only == null ? db.cats.indexOf(c) : only}"><h2>${esc(c.title)}</h2><table>
+    <tr><th>Forum</th><th class="num">Konular</th><th class="num">Mesajlar</th><th class="last">Son mesaj</th></tr>
+    ${c.boards.map(boardRow).join("")}
   </table></section>`).join("");
-  return `<div class="welcome"><b>GİZEMLİBOARD.COM'a hoş geldiniz.</b><br>Üye değilseniz üyelik formunu doldurun. Kayıtlı üye iseniz buradan giriş yapın. Eylül 2007 anasayfasındaki bölüm adları duruyor.</div>
-    <div class="stats"><span>En son üyemiz: <b>_feza_</b> · arşiv: 1.223 üye, 16.319 konu, 63.923 mesaj</span><span>Bu demoda ${db.users.length} üye, ${db.topics.length} konu, ${db.posts.length} mesaj</span></div>
-    ${rows}`;
+  const welcome = only == null ? `<div class="welcome"><b>Net Aleminin En Gizemli Forum Sitesi Sitesine Hoşgeldiniz.</b><br>Kategoriler ve son iletiler 8 Şubat 2010 arşivindeki anasayfadan alındı. Yazılar bu tarayıcıda durur.</div>
+    <div class="stats"><span>Konular: 1.195 · Mesajlar: 1.455 · Üye: 56 · Kayıt olan: 2</span><span>En yeni üyemiz: kzd2" · En popüler bölüm: Serbest Kürsü</span></div>` : `<div class="crumb"><a href="#/">Anasayfa</a> → ${esc(cats[0]?.title || "")}</div>`;
+  return welcome + rows;
 }
 
-function board(slug) {
+function boardView(slug) {
   const b = boardOf(slug);
   if (!b) return `<div class="welcome">Bölüm yok.</div>`;
   const list = topicsOf(slug).sort((a, z) => z.pinned - a.pinned || z.last - a.last);
-  return `<div class="crumb"><a href="#/">Anasayfa</a> → ${esc(b.cat)} → ${esc(b.name)}</div>
-    <section class="cat"><h2>${esc(b.name)}</h2><table>
+  const subs = (b.subs || []).length ? `<div class="subs">${b.subs.map((s) => `<a href="#/b/${s.slug}">${esc(s.name)}</a>`).join("")}</div>` : "";
+  const parent = b.parentSlug ? `<a href="#/b/${b.parentSlug}">${esc(b.parent)}</a> → ` : "";
+  return `<div class="crumb"><a href="#/">Anasayfa</a> → ${esc(b.cat)} → ${parent}${esc(b.name)}</div>
+    <section class="cat"><h2>${esc(b.name)}</h2>${b.desc ? `<div class="desc" style="padding:6px 10px">${esc(b.desc)}</div>` : ""}${subs}<table>
       <tr><th>Konu</th><th class="num">Cevap</th><th class="num">Bakış</th><th class="last">Son mesaj</th></tr>
-      ${list.length ? list.map((t) => `<tr><td><a class="board-name" href="#/t/${t.id}">${t.pinned ? "[sabit] " : ""}${esc(t.title)}</a><div class="desc">${esc(user(t.userId).name)}</div></td><td class="num">${replies(t.id)}</td><td class="num">${t.views}</td><td class="last">${when(t.last)}</td></tr>`).join("") : `<tr><td colspan="4">Bu masada konu yok.</td></tr>`}
+      ${list.length ? list.map((t) => `<tr><td><a class="board-name" href="#/t/${t.id}">${t.pinned ? "[sabit] " : ""}${esc(t.title)}</a><div class="desc">${esc(user(t.userId).name)}</div></td><td class="num">${replies(t.id)}</td><td class="num">${t.views}</td><td class="last">${vbDate(t.last)}</td></tr>`).join("") : `<tr><td colspan="4">henüz yok</td></tr>`}
     </table></section>
-    <div class="crumb"><a class="btn" href="#/yeni?b=${slug}">Yeni konu</a></div>`;
+    <div class="crumb"><a class="btn" href="#/yeni?b=${slug}">Yeni konu</a> · arşiv: ${num(b.archiveTopics)} konu, ${num(b.archivePosts)} mesaj</div>`;
 }
 
 function thread(id) {
@@ -131,25 +347,25 @@ function thread(id) {
   return `<div class="crumb"><a href="#/">Anasayfa</a> → <a href="#/b/${t.board}">${esc(b?.name || "")}</a> → ${esc(t.title)}</div>
     <div class="thread">${db.posts.filter((p) => p.topicId === t.id).map((p) => {
       const a = user(p.userId);
-      return `<article class="post"><div class="who"><b>${esc(a.name)}</b><span class="rank">${esc(a.rank || "Üye")}</span><div>@${esc(a.username)}</div></div><div class="body"><div class="when">${when(p.created)}</div>${esc(p.body).replace(/\n/g, "<br>")}</div></article>`;
+      return `<article class="post"><div class="who"><b>${esc(a.name)}</b><span class="rank">${esc(a.rank || "Üye")}</span><div>@${esc(a.username)}</div></div><div class="body"><div class="when">${vbDate(p.created)}</div>${esc(p.body).replace(/\n/g, "<br>")}</div></article>`;
     }).join("")}</div>
     <div class="composer">${admin}${form}</div>`;
 }
 
 function compose(pre) {
   if (!me()) return `<div class="welcome">Önce <a href="#/giris">giriş yap</a>.</div>`;
-  const opts = db.cats.flatMap((c) => c.boards).map((b) => `<option value="${b[0]}" ${b[0] === pre ? "selected" : ""}>${esc(b[1])}</option>`).join("");
+  const opts = flat().map((b) => `<option value="${b.slug}" ${b.slug === pre ? "selected" : ""}>${b.parent ? "— " : ""}${esc(b.name)}</option>`).join("");
   return `<form class="composer" id="compose"><h2>Yeni konu</h2><label>Bölüm</label><select name="board">${opts}</select><label>Başlık</label><input name="title" required /><label>İleti</label><textarea name="body" required></textarea><button class="btn" type="submit">Konuyu aç</button></form>`;
 }
 
 function auth(mode) {
   const reg = mode === "katil";
-  return `<form class="auth" id="auth"><h2>${reg ? "Üyelik formu" : "Giriş"}</h2><div class="err" id="err" hidden></div>
+  return `<form class="auth" id="auth"><h2>${reg ? "Kayıt ol" : "Giriş"}</h2><div class="err" id="err" hidden></div>
     ${reg ? `<label>Görünen ad</label><input name="name" required />` : ""}
-    <label>Kullanıcı adı</label><input name="username" required />
+    <label>Nick</label><input name="username" required />
     <label>Şifre</label><input name="password" type="password" required />
     <button class="btn" type="submit">${reg ? "Üye ol" : "Giriş yap"}</button>
-    <p>${reg ? "" : "Yönetici: admin / GbAdmin2007 · Üye: demo / 123456"}</p></form>`;
+    <p>Yönetici: admin / GbAdmin2007 · Üye: demo / 123456</p></form>`;
 }
 
 function search(q) {
@@ -169,9 +385,9 @@ function bind() {
     const id = Number(location.hash.split("/")[2]);
     const body = String(new FormData(e.target).get("body") || "").trim();
     if (body.length < 2) return;
-    db.posts.push({ id: nextId(db.posts), topicId: id, userId: db.me, body, created: Date.now() });
     const t = db.topics.find((x) => x.id === id);
-    if (t) t.last = Date.now();
+    db.posts.push({ id: nextId(db.posts), topicId: id, userId: db.me, body, created: Date.now() });
+    if (t) { t.last = Date.now(); bump(t.board, 1); }
     save(); route();
   });
   document.getElementById("compose")?.addEventListener("submit", (e) => {
@@ -181,8 +397,10 @@ function bind() {
     const body = String(f.get("body") || "").trim();
     if (title.length < 3) return;
     const id = nextId(db.topics);
-    db.topics.push({ id, board: f.get("board"), userId: db.me, title, pinned: false, locked: false, views: 0, last: Date.now(), created: Date.now() });
+    const slug = f.get("board");
+    db.topics.push({ id, board: slug, userId: db.me, title, pinned: false, locked: false, views: 0, last: Date.now(), created: Date.now() });
     db.posts.push({ id: nextId(db.posts), topicId: id, userId: db.me, body, created: Date.now() });
+    bump(slug, 1);
     save(); location.hash = "#/t/" + id;
   });
   document.getElementById("auth")?.addEventListener("submit", (e) => {
@@ -198,7 +416,7 @@ function bind() {
       db.me = id; save(); location.hash = "#/"; return;
     }
     const found = db.users.find((u) => u.username === username && u.password === password);
-    if (!found) { err.hidden = false; err.textContent = "Kullanıcı adı veya şifre uyuşmuyor."; return; }
+    if (!found) { err.hidden = false; err.textContent = "Nick veya şifre uyuşmuyor."; return; }
     db.me = found.id; save(); location.hash = "#/";
   });
   document.getElementById("find")?.addEventListener("submit", (e) => {
@@ -222,9 +440,10 @@ function route() {
   const [path, query] = raw.split("?");
   const parts = path.split("/").filter(Boolean);
   let html = home();
-  if (parts[0] === "b") html = board(parts[1]);
+  if (parts[0] === "k") html = home(Number(parts[1]));
+  else if (parts[0] === "b") html = boardView(parts[1]);
   else if (parts[0] === "t") html = thread(parts[1]);
-  else if (parts[0] === "yeni") html = compose(new URLSearchParams(query || "").get("b") || "hosgeldiniz");
+  else if (parts[0] === "yeni") html = compose(new URLSearchParams(query || "").get("b") || "duyuru");
   else if (parts[0] === "giris") html = auth("giris");
   else if (parts[0] === "katil") html = auth("katil");
   else if (parts[0] === "uyeler") html = members();
