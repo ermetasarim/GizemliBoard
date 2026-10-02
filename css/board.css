@@ -31,6 +31,8 @@ table.forum td, table.threads td { padding: 8px; border-top: 1px solid #f0e0cc; 
 table.forum tbody tr:nth-child(even) td, table.threads tbody tr:nth-child(even) td { background: #fff8f0; }
 table.forum tr:hover td, table.threads tr:hover td { background: #fff1dc; }
 .board-name { font-weight: bold; font-size: 13px; }
+.no { display: inline-block; min-width: 1.4em; margin-right: 6px; color: #c45500; font-weight: bold; }
+.cat h2 a, .cat h2 .no { color: #fff8ee; }
 .desc { color: #8a6a4a; margin-top: 2px; }
 .subcols { width: 100%; margin: 6px 0 2px; border-collapse: collapse; }
 .subcols td { width: 50%; padding: 2px 8px 2px 0; border: 0; background: transparent !important; vertical-align: top; }
