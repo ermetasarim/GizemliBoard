@@ -1,4 +1,4 @@
-const KEY = "gizemliboard-v2";
+const KEY = "gizemliboard-v3";
 const dt = (y, m, d, h, min) => new Date(y, m - 1, d, h, min).getTime();
 
 const sub = (slug, name, topics, posts) => ({ slug, name, desc: "", archiveTopics: topics || 0, archivePosts: posts || 0 });
@@ -222,11 +222,11 @@ const lastPosts = [
   ["oneri", 5, "Öneri,Şikayet Soru &...", dt(2010, 2, 1, 23, 57)],
   ["kutlama", 6, "100.Mesaj oldum", dt(2010, 2, 6, 17, 38)],
   ["tanitin", 7, "cümleten merhaba :)", dt(2010, 2, 6, 11, 57)],
-  ["vatan", 8, "OSMANLI TARiHİ KRONOLOJİSİ", dt(2010, 2, 5, 13, 50)],
+  ["osmanli", 8, "OSMANLI TARiHİ KRONOLOJİSİ", dt(2010, 2, 5, 13, 50)],
   ["ulkeler", 3, "Afganİstan", dt(2010, 1, 27, 18, 32)],
-  ["kultur", 3, "Baki Kuru", dt(2010, 1, 27, 18, 47)],
+  ["kultur-sanat", 3, "Baki Kuru", dt(2010, 1, 27, 18, 47)],
   ["haber", 4, "Demet Akalın evlendi", dt(2010, 2, 2, 22, 21)],
-  ["hertelden", 3, "bir satanistin hikayesi", dt(2010, 2, 3, 12, 55)],
+  ["kursu", 3, "bir satanistin hikayesi", dt(2010, 2, 3, 12, 55)],
   ["anket", 5, "Sizce en yakışıklı futbolcu...", dt(2010, 1, 30, 13, 24)],
   ["muhabbet", 3, "Muhabbet Bölümü", dt(2010, 1, 29, 14, 9)],
   ["merak", 9, "Cola'nın yararları", dt(2010, 1, 26, 20, 11)],
@@ -240,10 +240,10 @@ const lastPosts = [
   ["radyo", 5, "Radyo", dt(2010, 2, 2, 0, 4)],
   ["sorgu", 5, "Sorgu ve sorgulama bölümü", dt(2010, 2, 2, 0, 11)],
   ["sehir", 12, "[GB]Hastahane", dt(2010, 1, 25, 16, 20)],
-  ["resim", 5, "Manzara", dt(2010, 2, 2, 21, 34)],
+  ["manzara", 5, "Manzara", dt(2010, 2, 2, 21, 34)],
   ["muzik", 7, "Evanescence-Lithium", dt(2010, 2, 2, 15, 38)],
-  ["diziler", 13, "akasya duragı", dt(2010, 2, 3, 0, 18)],
-  ["ezel", 13, "ezel 5", dt(2010, 2, 2, 23, 29)],
+  ["akasya", 13, "akasya duragı", dt(2010, 2, 3, 0, 18)],
+  ["ezel-resim", 13, "ezel 5", dt(2010, 2, 2, 23, 29)],
   ["program", 4, "ULtraXp PLus Version 2oo9 DVD...", dt(2010, 2, 7, 23, 20)],
   ["msn", 5, "msn ye yazılacak bikaç nick", dt(2010, 1, 30, 11, 58)],
   ["oyun", 5, "GTA 4 hile", dt(2010, 1, 30, 12, 4)],
@@ -252,7 +252,7 @@ const lastPosts = [
   ["melodi", 3, "Nil KaraibrahimqiL_C0LA TURKA", dt(2010, 1, 28, 10, 15)],
   ["cep-oyun", 3, "Fifa Street 2 Cep telefonu...", dt(2010, 2, 5, 19, 22)],
   ["server", 5, "Server OPTİMİZASYON", dt(2010, 1, 30, 12, 8)],
-  ["spor", 3, "Santos'un önü açıldı", dt(2010, 1, 30, 15, 0)],
+  ["fb", 3, "Santos'un önü açıldı", dt(2010, 1, 30, 15, 0)],
   ["cop", 3, "Kelime Bulma Yarışması", dt(2010, 2, 3, 16, 32)]
 ];
 
@@ -302,38 +302,42 @@ function chrome() {
   document.getElementById("subbar").innerHTML = `<span>Şu an: ${u ? esc(u.name) : "3 ziyaretçi"}</span><span><a href="#/uyeler">Üyeler</a> · <a href="#/arama">Arama</a></span>`;
 }
 
-function boardRow(b) {
-  const list = topicsOf(b.slug).sort((a, z) => z.last - a.last);
-  const last = list[0];
-  const subs = (b.subs || []).map((s) => `<a href="#/b/${s.slug}">${esc(s.name)}${s.archiveTopics ? ` (${num(s.archiveTopics)}/${num(s.archivePosts)})` : ""}</a>`).join("");
-  return `<tr><td><span class="folder${b.archiveTopics ? "" : " off"}"></span><a class="board-name" href="#/b/${b.slug}">${esc(b.name)}</a>${b.desc ? `<div class="desc">${esc(b.desc)}</div>` : ""}${subs ? `<div class="subs">${subs}</div>` : ""}</td>
-    <td class="num">${num(b.archiveTopics)}</td><td class="num">${num(b.archivePosts)}</td>
-    <td class="last">${last ? `<a href="#/t/${last.id}">${esc(last.title)}</a><br>Son yazan ${esc(user(last.userId).name)}<br>${vbDate(last.last)}` : "henüz yok"}</td></tr>`;
+function latest(slugs) {
+  return db.topics.filter((t) => slugs.includes(t.board)).sort((a, z) => z.last - a.last)[0];
 }
-
+function lastCell(topic) {
+  if (!topic) return "henüz yok";
+  return `<a href="#/t/${topic.id}">${esc(topic.title)}</a><div>Son yazan ${esc(user(topic.userId).name)}</div><div>${vbDate(topic.last)}</div>`;
+}
+function forumRow(b, child) {
+  const last = latest(child ? [b.slug] : [b.slug, ...(b.subs || []).map((s) => s.slug)]);
+  return `<tr class="${child ? "sub" : "main"}"><td><span class="${child ? "dot" : "folder"}${b.archiveTopics ? "" : " off"}"></span><a class="board-name" href="#/b/${b.slug}">${esc(b.name)}</a>${b.desc ? `<div class="desc">${esc(b.desc)}</div>` : ""}</td>
+    <td class="last">${lastCell(last)}</td>
+    <td class="num">${num(b.archiveTopics)}</td>
+    <td class="num">${num(b.archivePosts)}</td></tr>`;
+}
+function forumTable(boards, child) {
+  return `<table class="forum"><thead><tr><th>Forum</th><th class="last">Son mesaj</th><th class="num">Konular</th><th class="num">Mesajlar</th></tr></thead><tbody>
+    ${boards.map((b) => forumRow(b, child) + ((b.subs || []).map((s) => forumRow(s, true)).join(""))).join("")}
+  </tbody></table>`;
+}
 function home(only) {
   const cats = only == null ? db.cats : [db.cats[only]].filter(Boolean);
-  const rows = cats.map((c, i) => `<section class="cat" id="k${only == null ? db.cats.indexOf(c) : only}"><h2>${esc(c.title)}</h2><table>
-    <tr><th>Forum</th><th class="num">Konular</th><th class="num">Mesajlar</th><th class="last">Son mesaj</th></tr>
-    ${c.boards.map(boardRow).join("")}
-  </table></section>`).join("");
-  const welcome = only == null ? `<div class="welcome"><b>Net Aleminin En Gizemli Forum Sitesi Sitesine Hoşgeldiniz.</b><br>Kategoriler ve son iletiler 8 Şubat 2010 arşivindeki anasayfadan alındı. Yazılar bu tarayıcıda durur.</div>
-    <div class="stats"><span>Konular: 1.195 · Mesajlar: 1.455 · Üye: 56 · Kayıt olan: 2</span><span>En yeni üyemiz: kzd2" · En popüler bölüm: Serbest Kürsü</span></div>` : `<div class="crumb"><a href="#/">Anasayfa</a> → ${esc(cats[0]?.title || "")}</div>`;
+  const rows = cats.map((c) => `<section class="cat" id="k${db.cats.indexOf(c)}"><h2><a href="#/k/${db.cats.indexOf(c)}">${esc(c.title)}</a></h2>${forumTable(c.boards)}</section>`).join("");
+  const welcome = only == null ? `<div class="welcome"><b>Net Aleminin En Gizemli Forum Sitesi Sitesine Hoşgeldiniz.</b><br>Kategori, altındaki forum ve o forumda açılan konu 8 Şubat 2010 arşivindeki sırayla duruyor.</div>
+    <div class="stats"><span>Konular: 1.195 · Mesajlar: 1.455 · Üye: 56</span><span>En yeni üyemiz: kzd2" · En popüler bölüm: Serbest Kürsü</span></div>` : `<div class="crumb"><a href="#/">Anasayfa</a> → ${esc(cats[0]?.title || "")}</div>`;
   return welcome + rows;
 }
-
 function boardView(slug) {
   const b = boardOf(slug);
   if (!b) return `<div class="welcome">Bölüm yok.</div>`;
   const list = topicsOf(slug).sort((a, z) => z.pinned - a.pinned || z.last - a.last);
-  const subs = (b.subs || []).length ? `<div class="subs">${b.subs.map((s) => `<a href="#/b/${s.slug}">${esc(s.name)}</a>`).join("")}</div>` : "";
   const parent = b.parentSlug ? `<a href="#/b/${b.parentSlug}">${esc(b.parent)}</a> → ` : "";
-  return `<div class="crumb"><a href="#/">Anasayfa</a> → ${esc(b.cat)} → ${parent}${esc(b.name)}</div>
-    <section class="cat"><h2>${esc(b.name)}</h2>${b.desc ? `<div class="desc" style="padding:6px 10px">${esc(b.desc)}</div>` : ""}${subs}<table>
-      <tr><th>Konu</th><th class="num">Cevap</th><th class="num">Bakış</th><th class="last">Son mesaj</th></tr>
-      ${list.length ? list.map((t) => `<tr><td><a class="board-name" href="#/t/${t.id}">${t.pinned ? "[sabit] " : ""}${esc(t.title)}</a><div class="desc">${esc(user(t.userId).name)}</div></td><td class="num">${replies(t.id)}</td><td class="num">${t.views}</td><td class="last">${vbDate(t.last)}</td></tr>`).join("") : `<tr><td colspan="4">henüz yok</td></tr>`}
-    </table></section>
-    <div class="crumb"><a class="btn" href="#/yeni?b=${slug}">Yeni konu</a> · arşiv: ${num(b.archiveTopics)} konu, ${num(b.archivePosts)} mesaj</div>`;
+  const subs = (b.subs || []).length ? `<section class="cat"><h2>Alt forumlar</h2>${forumTable(b.subs, true)}</section>` : "";
+  const topics = `<section class="cat"><h2>Forumda bulunan konular: ${esc(b.name)}</h2>${b.desc ? `<div class="note">${esc(b.desc)}</div>` : ""}<table class="threads"><thead><tr><th>Konu / konuyu başlatan</th><th class="last">Son mesaj</th><th class="num">Cevap</th><th class="num">Görüntüleme</th></tr></thead><tbody>
+    ${list.length ? list.map((t) => `<tr><td><a class="board-name" href="#/t/${t.id}">${t.pinned ? "[sabit] " : ""}${esc(t.title)}</a><div class="desc">${esc(user(t.userId).name)}</div></td><td class="last">${esc(user(t.userId).name)}<div>${vbDate(t.last)}</div></td><td class="num">${replies(t.id)}</td><td class="num">${t.views}</td></tr>`).join("") : `<tr><td colspan="4">henüz yok</td></tr>`}
+  </tbody></table></section>`;
+  return `<div class="crumb"><a href="#/">Anasayfa</a> → ${esc(b.cat)} → ${parent}${esc(b.name)}</div>${subs}${topics}<div class="crumb"><a class="btn" href="#/yeni?b=${slug}">Yeni konu</a> · arşiv: ${num(b.archiveTopics)} konu, ${num(b.archivePosts)} mesaj</div>`;
 }
 
 function thread(id) {
