@@ -13,8 +13,8 @@ a:hover { text-decoration: underline; }
 button, input, select, textarea { font: inherit; }
 .wrap { width: min(1100px, calc(100% - 16px)); margin: 12px auto 28px; background: var(--paper); border: 1px solid #d7b48a; box-shadow: 0 8px 24px rgba(120, 60, 10, .12); }
 .top { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; padding: 14px 16px 10px; background: linear-gradient(#ffb24a, #e36b00); color: #fff8ee; }
-.mark { color: #fff; font: 28px Georgia, "Times New Roman", serif; letter-spacing: .04em; text-shadow: 0 1px 0 #9a4300; }
-.mark small { display: block; margin-top: 3px; font: 10px Tahoma, sans-serif; letter-spacing: .12em; color: #fff3df; }
+.mark { display: inline-block; line-height: 0; }
+.mark img { height: 72px; width: auto; display: block; border-radius: 4px; }
 .tools { text-align: right; }
 .tools a, .tools button { color: #fff; background: none; border: 0; cursor: pointer; padding: 0 4px; }
 .nav { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 7px 12px; background: var(--orange-deep); }
